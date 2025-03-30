@@ -9,10 +9,11 @@ const Index = () => {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
-              Customize Your Phishing Quiz
+              Phishing Awareness Quiz
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Select your quiz preferences below to begin testing your phishing awareness skills.
+              Test your knowledge and learn how to identify and avoid phishing attempts 
+              with our interactive quiz.
             </p>
           </div>
           
