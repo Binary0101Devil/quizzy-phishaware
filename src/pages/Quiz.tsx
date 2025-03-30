@@ -1,23 +1,48 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import QuizCard from "@/components/QuizCard";
 import ProgressBar from "@/components/ProgressBar";
 import quizQuestions from "@/data/quizQuestions";
 import { toast } from "sonner";
 
+interface QuizParams {
+  questionCount: number;
+  categories: string[];
+}
+
 const Quiz = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const quizParams = location.state as QuizParams | null;
+  
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
+  const [selectedQuestions, setSelectedQuestions] = useState(quizQuestions);
   
   useEffect(() => {
     // Reset quiz state when component mounts
     setCurrentQuestionIndex(0);
     setScore(0);
     setAnsweredQuestions([]);
-  }, []);
+    
+    // If we have quiz parameters, select questions based on those
+    if (quizParams) {
+      const { questionCount, categories } = quizParams;
+      
+      // For now, we'll just take a subset of our available questions
+      // In a real app, you'd filter by categories and get from a larger dataset
+      const randomizedQuestions = [...quizQuestions]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, Math.min(questionCount, quizQuestions.length));
+      
+      setSelectedQuestions(randomizedQuestions);
+    } else {
+      // If no params, redirect to home to select parameters
+      navigate("/");
+    }
+  }, [navigate, quizParams]);
   
   const handleNextQuestion = (isCorrect: boolean) => {
     // Update score
@@ -32,7 +57,7 @@ const Quiz = () => {
     setAnsweredQuestions(prev => [...prev, currentQuestionIndex]);
     
     // Move to next question or results
-    if (currentQuestionIndex < quizQuestions.length - 1) {
+    if (currentQuestionIndex < selectedQuestions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
@@ -40,12 +65,16 @@ const Quiz = () => {
       navigate("/results", { 
         state: { 
           score, 
-          totalQuestions: quizQuestions.length,
+          totalQuestions: selectedQuestions.length,
           answeredQuestions: [...answeredQuestions, currentQuestionIndex]
         } 
       });
     }
   };
+
+  if (selectedQuestions.length === 0) {
+    return <div className="min-h-screen flex items-center justify-center">Loading quiz questions...</div>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -58,12 +87,12 @@ const Quiz = () => {
             </p>
             <ProgressBar 
               current={currentQuestionIndex + 1} 
-              total={quizQuestions.length} 
+              total={selectedQuestions.length} 
             />
           </div>
           
           <QuizCard
-            question={quizQuestions[currentQuestionIndex]}
+            question={selectedQuestions[currentQuestionIndex]}
             onNext={handleNextQuestion}
           />
         </div>

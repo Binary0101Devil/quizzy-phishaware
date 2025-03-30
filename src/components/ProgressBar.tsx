@@ -1,5 +1,6 @@
 
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface ProgressBarProps {
   current: number;
@@ -16,12 +17,15 @@ const ProgressBar = ({ current, total }: ProgressBarProps) => {
         <span className="text-muted-foreground">{Math.round(percentage)}% Complete</span>
       </div>
       <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-        <div 
+        <motion.div 
           className={cn(
             "h-full transition-all duration-300 ease-in-out",
             percentage > 70 ? "bg-cyber-success" : "bg-cyber-blue"
           )} 
           style={{ width: `${percentage}%` }}
+          initial={{ width: 0 }}
+          animate={{ width: `${percentage}%` }}
+          transition={{ duration: 0.5 }}
         />
       </div>
     </div>

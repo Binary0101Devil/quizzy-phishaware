@@ -2,6 +2,8 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ResultCard from "@/components/ResultCard";
+import { Button } from "@/components/ui/button";
+import { Home } from "lucide-react";
 
 interface LocationState {
   score: number;
@@ -22,7 +24,7 @@ const Results = () => {
   }, [state, navigate]);
   
   const handleResetQuiz = () => {
-    navigate("/quiz");
+    navigate("/");
   };
   
   if (!state) {
@@ -39,6 +41,16 @@ const Results = () => {
           totalQuestions={state.totalQuestions}
           resetQuiz={handleResetQuiz}
         />
+        
+        <div className="mt-8 text-center">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/")}
+            className="mt-4"
+          >
+            <Home className="mr-2 h-4 w-4" /> Back to Home
+          </Button>
+        </div>
       </div>
       
       <footer className="bg-cyber-navy text-white py-4 mt-auto">
