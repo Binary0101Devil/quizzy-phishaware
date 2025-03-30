@@ -31,10 +31,18 @@ const Quiz = () => {
     if (quizParams) {
       const { questionCount, categories } = quizParams;
       
-      // For now, we'll just take a subset of our available questions
-      // In a real app, you'd filter by categories and get from a larger dataset
-      const randomizedQuestions = [...quizQuestions]
-        .sort(() => Math.random() - 0.5)
+      // Shuffle the questions array thoroughly using Fisher-Yates algorithm
+      const shuffleQuestions = (questions: typeof quizQuestions) => {
+        const shuffled = [...questions];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      };
+      
+      // Shuffle all questions first
+      const randomizedQuestions = shuffleQuestions(quizQuestions)
         .slice(0, Math.min(questionCount, quizQuestions.length));
       
       setSelectedQuestions(randomizedQuestions);
