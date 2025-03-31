@@ -11,10 +11,11 @@ interface ResultCardProps {
   score: number;
   totalQuestions: number;
   resetQuiz: () => void;
-  userName?: string; // Add userName as an optional prop
+  userName?: string;
+  timeBonus?: number; // Add timeBonus as an optional prop
 }
 
-const ResultCard = ({ score, totalQuestions, resetQuiz, userName }: ResultCardProps) => {
+const ResultCard = ({ score, timeBonus = 0, totalQuestions, resetQuiz, userName }: ResultCardProps) => {
   const navigate = useNavigate();
   const [percentage, setPercentage] = useState(0);
   
@@ -76,6 +77,15 @@ const ResultCard = ({ score, totalQuestions, resetQuiz, userName }: ResultCardPr
               </div>
               <span className="font-bold">{totalQuestions - score}</span>
             </div>
+            {/* Add a new row for Time Bonus points */}
+            {timeBonus > 0 && (
+              <div className="flex justify-between items-center mt-2">
+                <div className="flex items-center">
+                  <span>Time Bonus</span>
+                </div>
+                <span className="font-bold text-green-500">+{timeBonus}</span>
+              </div>
+            )}
             <div className="flex justify-between items-center mt-2">
               <div className="flex items-center">
                 <span>Total Questions</span>
