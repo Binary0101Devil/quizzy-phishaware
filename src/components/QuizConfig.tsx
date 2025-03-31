@@ -4,20 +4,29 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Shield, AlertTriangle } from "lucide-react";
+import { Shield, AlertTriangle, Trophy } from "lucide-react";
+import { toast } from "sonner";
 
 const QuizConfig = () => {
   const navigate = useNavigate();
   const [questionCount, setQuestionCount] = useState("10");
   const [categories, setCategories] = useState<string[]>(["email", "social"]);
+  const [userName, setUserName] = useState("");
   
   const handleStartQuiz = () => {
+    if (!userName.trim()) {
+      toast.error("Please enter your name before starting the quiz");
+      return;
+    }
+    
     navigate("/quiz", { 
       state: { 
         questionCount: parseInt(questionCount),
-        categories 
+        categories,
+        userName: userName.trim()
       }
     });
   };
@@ -33,6 +42,19 @@ const QuizConfig = () => {
         </CardHeader>
         
         <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="user-name">Your Name</Label>
+            <Input 
+              id="user-name" 
+              placeholder="Enter your name" 
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              Your name will appear on the leaderboard
+            </p>
+          </div>
+          
           <div className="space-y-2">
             <Label htmlFor="question-count">Number of Questions</Label>
             <Select
@@ -108,9 +130,16 @@ const QuizConfig = () => {
           </div>
         </CardContent>
         
-        <CardFooter>
+        <CardFooter className="flex flex-col space-y-4">
           <Button onClick={handleStartQuiz} className="w-full bg-blue-600 hover:bg-blue-700">
             <Shield className="mr-2" /> Start Quiz
+          </Button>
+          <Button 
+            variant="outline" 
+            onClick={() => navigate("/leaderboard")} 
+            className="w-full"
+          >
+            <Trophy className="mr-2" /> View Leaderboard
           </Button>
         </CardFooter>
       </Card>

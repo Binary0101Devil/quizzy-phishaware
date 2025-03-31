@@ -9,6 +9,7 @@ import { toast } from "sonner";
 interface QuizParams {
   questionCount: number;
   categories: string[];
+  userName: string;
 }
 
 const Quiz = () => {
@@ -20,6 +21,7 @@ const Quiz = () => {
   const [score, setScore] = useState(0);
   const [answeredQuestions, setAnsweredQuestions] = useState<number[]>([]);
   const [selectedQuestions, setSelectedQuestions] = useState(quizQuestions);
+  const [userName, setUserName] = useState("");
   
   useEffect(() => {
     // Reset quiz state when component mounts
@@ -29,7 +31,8 @@ const Quiz = () => {
     
     // If we have quiz parameters, select questions based on those
     if (quizParams) {
-      const { questionCount, categories } = quizParams;
+      const { questionCount, categories, userName } = quizParams;
+      setUserName(userName);
       
       // Shuffle the questions array thoroughly using Fisher-Yates algorithm
       const shuffleQuestions = (questions: typeof quizQuestions) => {
@@ -69,14 +72,44 @@ const Quiz = () => {
       setCurrentQuestionIndex(prev => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      // Quiz completed - navigate to results
+      // Quiz completed - save to leaderboard and navigate to results
+      saveToLeaderboard();
       navigate("/results", { 
         state: { 
           score, 
           totalQuestions: selectedQuestions.length,
-          answeredQuestions: [...answeredQuestions, currentQuestionIndex]
+          answeredQuestions: [...answeredQuestions, currentQuestionIndex],
+          userName
         } 
       });
+    }
+  };
+  
+  const saveToLeaderboard = () => {
+    try {
+      // Calculate percentage score
+      const percentage = Math.round((score / selectedQuestions.length) * 100);
+      
+      // Create leaderboard entry
+      const newEntry = {
+        name: userName,
+        score: score,
+        totalQuestions: selectedQuestions.length,
+        percentage,
+        date: new Date().toLocaleDateString()
+      };
+      
+      // Get existing leaderboard data
+      const existingData = localStorage.getItem("phishing_quiz_leaderboard");
+      const leaderboard = existingData ? JSON.parse(existingData) : [];
+      
+      // Add new entry
+      leaderboard.push(newEntry);
+      
+      // Save back to localStorage
+      localStorage.setItem("phishing_quiz_leaderboard", JSON.stringify(leaderboard));
+    } catch (error) {
+      console.error("Error saving to leaderboard:", error);
     }
   };
 
@@ -90,8 +123,11 @@ const Quiz = () => {
         <div className="max-w-3xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-center mb-2">Phishing Awareness Quiz</h1>
-            <p className="text-center text-muted-foreground mb-6">
+            <p className="text-center text-muted-foreground mb-2">
               Select the best answer for each question
+            </p>
+            <p className="text-center font-medium mb-6">
+              Player: {userName}
             </p>
             <ProgressBar 
               current={currentQuestionIndex + 1} 

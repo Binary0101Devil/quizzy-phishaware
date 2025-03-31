@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Shield, AlertTriangle } from "lucide-react";
+import { Shield, AlertTriangle, Trophy } from "lucide-react";
 
 const Homepage = () => {
   const navigate = useNavigate();
@@ -21,13 +21,24 @@ const Homepage = () => {
                 phishing attacks.
               </p>
               
-              <Button 
-                onClick={() => navigate("/config")} 
-                className="bg-white text-cyber-navy hover:bg-white/90"
-                size="lg"
-              >
-                <Shield className="mr-2 text-cyber-blue" /> Start Quiz
-              </Button>
+              <div className="space-x-4">
+                <Button 
+                  onClick={() => navigate("/config")} 
+                  className="bg-white text-cyber-navy hover:bg-white/90"
+                  size="lg"
+                >
+                  <Shield className="mr-2 text-cyber-blue" /> Start Quiz
+                </Button>
+                
+                <Button 
+                  onClick={() => navigate("/leaderboard")} 
+                  variant="outline"
+                  className="border-white text-white hover:bg-white/10"
+                  size="lg"
+                >
+                  <Trophy className="mr-2" /> Leaderboard
+                </Button>
+              </div>
             </div>
             
             <div className="flex justify-center">
@@ -78,13 +89,21 @@ const Homepage = () => {
             </div>
           </div>
           
-          <div className="mt-12 text-center">
+          <div className="mt-12 text-center space-x-4">
             <Button 
               onClick={() => navigate("/config")} 
               className="bg-cyber-blue hover:bg-cyber-blue/90"
               size="lg"
             >
               Take the Challenge
+            </Button>
+            
+            <Button 
+              onClick={() => navigate("/leaderboard")} 
+              variant="outline"
+              size="lg"
+            >
+              <Trophy className="mr-2" /> View Leaderboard
             </Button>
           </div>
         </div>

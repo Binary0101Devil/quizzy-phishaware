@@ -3,12 +3,13 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ResultCard from "@/components/ResultCard";
 import { Button } from "@/components/ui/button";
-import { Home } from "lucide-react";
+import { Home, Trophy } from "lucide-react";
 
 interface LocationState {
   score: number;
   totalQuestions: number;
   answeredQuestions: number[];
+  userName: string;
 }
 
 const Results = () => {
@@ -34,19 +35,29 @@ const Results = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <div className="container mx-auto px-4 py-12 flex-grow">
-        <h1 className="text-3xl font-bold text-center mb-8">Your Results</h1>
+        <h1 className="text-3xl font-bold text-center mb-2">Your Results</h1>
+        <p className="text-center text-muted-foreground mb-8">
+          Great job, {state.userName}!
+        </p>
         
         <ResultCard 
           score={state.score} 
           totalQuestions={state.totalQuestions}
           resetQuiz={handleResetQuiz}
+          userName={state.userName}
         />
         
-        <div className="mt-8 text-center">
+        <div className="mt-8 text-center space-y-4">
+          <Button 
+            onClick={() => navigate("/leaderboard")}
+            className="bg-cyber-blue hover:bg-cyber-blue/90 mr-4"
+          >
+            <Trophy className="mr-2 h-4 w-4" /> View Leaderboard
+          </Button>
+          
           <Button 
             variant="outline" 
             onClick={() => navigate("/")}
-            className="mt-4"
           >
             <Home className="mr-2 h-4 w-4" /> Back to Home
           </Button>
