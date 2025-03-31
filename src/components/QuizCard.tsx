@@ -1,20 +1,54 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Progress } from "@/components/ui/progress";
 import type { QuizQuestion } from "@/data/quizQuestions";
 
 interface QuizCardProps {
   question: QuizQuestion;
-  onNext: (isCorrect: boolean) => void;
+  onNext: (isCorrect: boolean, timeRemaining: number) => void;
+  questionTimer: number; // in seconds
 }
 
-const QuizCard = ({ question, onNext }: QuizCardProps) => {
+const QuizCard = ({ question, onNext, questionTimer }: QuizCardProps) => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(questionTimer);
+  const [progressValue, setProgressValue] = useState(100);
+  
+  // Timer effect
+  useEffect(() => {
+    // Initialize timer
+    setTimeRemaining(questionTimer);
+    setProgressValue(100);
+    
+    // Create interval to update timer every second
+    const timerInterval = setInterval(() => {
+      setTimeRemaining(prev => {
+        const newTime = prev - 1;
+        // Update progress bar value based on time remaining
+        setProgressValue((newTime / questionTimer) * 100);
+        return newTime;
+      });
+    }, 1000);
+    
+    // Auto-submit when timer reaches 0
+    const timerTimeout = setTimeout(() => {
+      if (!hasSubmitted) {
+        handleSubmit();
+      }
+    }, questionTimer * 1000);
+    
+    // Clean up interval and timeout on unmount or when question changes
+    return () => {
+      clearInterval(timerInterval);
+      clearTimeout(timerTimeout);
+    };
+  }, [question, questionTimer]);
   
   const handleOptionSelect = (index: number) => {
     if (!hasSubmitted) {
@@ -23,18 +57,25 @@ const QuizCard = ({ question, onNext }: QuizCardProps) => {
   };
   
   const handleSubmit = () => {
-    if (selectedOption !== null && !hasSubmitted) {
+    if (!hasSubmitted) {
       setHasSubmitted(true);
     }
   };
   
   const handleNext = () => {
     if (hasSubmitted) {
-      onNext(selectedOption === question.correctAnswer);
+      onNext(selectedOption === question.correctAnswer, timeRemaining);
       setSelectedOption(null);
       setHasSubmitted(false);
     }
   };
+  
+  // Auto-submit when time runs out
+  useEffect(() => {
+    if (timeRemaining <= 0 && !hasSubmitted) {
+      handleSubmit();
+    }
+  }, [timeRemaining, hasSubmitted]);
   
   const getOptionClasses = (index: number) => {
     if (!hasSubmitted) {
@@ -60,9 +101,21 @@ const QuizCard = ({ question, onNext }: QuizCardProps) => {
   return (
     <Card className="w-full max-w-2xl mx-auto cyber-card">
       <CardHeader>
-        <CardTitle className="text-xl text-center">
-          {question.question}
-        </CardTitle>
+        <div className="flex justify-between items-center mb-2">
+          <CardTitle className="text-xl">
+            {question.question}
+          </CardTitle>
+          <div className="flex items-center bg-gray-100 px-3 py-1 rounded-full">
+            <Clock className="h-4 w-4 mr-2 text-gray-700" />
+            <span className={cn(
+              "font-medium",
+              timeRemaining < 10 ? "text-red-500" : "text-gray-700"
+            )}>
+              {timeRemaining}s
+            </span>
+          </div>
+        </div>
+        <Progress value={progressValue} className="h-2" />
       </CardHeader>
       <CardContent>
         <div className="space-y-1">

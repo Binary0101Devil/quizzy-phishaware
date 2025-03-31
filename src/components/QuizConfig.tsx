@@ -69,10 +69,14 @@ const QuizConfig = () => {
                 <SelectItem value="10">10 Questions</SelectItem>
                 <SelectItem value="15">15 Questions</SelectItem>
                 <SelectItem value="20">20 Questions</SelectItem>
+                <SelectItem value="30">30 Questions</SelectItem>
+                <SelectItem value="50">50 Questions</SelectItem>
+                <SelectItem value="75">75 Questions</SelectItem>
+                <SelectItem value="100">100 Questions</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
-              Choose how many questions you want to answer
+              Choose how many questions you want to answer. The more questions, the more challenging!
             </p>
           </div>
           
@@ -126,7 +130,10 @@ const QuizConfig = () => {
           
           <div className="bg-amber-50 border border-amber-200 rounded-md p-3 flex gap-3 text-sm">
             <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0" />
-            <p>The full database contains over 10,000 questions. We'll select a random sample based on your preferences.</p>
+            <div>
+              <p className="mb-1">The quiz now has a 30-second timer for each question!</p>
+              <p>Answer quickly for bonus points - the faster you answer correctly, the more points you'll earn.</p>
+            </div>
           </div>
         </CardContent>
         

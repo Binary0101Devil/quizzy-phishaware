@@ -7,6 +7,7 @@ import { Home, Trophy } from "lucide-react";
 
 interface LocationState {
   score: number;
+  timeBonus: number;
   totalQuestions: number;
   answeredQuestions: number[];
   userName: string;
@@ -42,6 +43,7 @@ const Results = () => {
         
         <ResultCard 
           score={state.score} 
+          timeBonus={state.timeBonus}
           totalQuestions={state.totalQuestions}
           resetQuiz={handleResetQuiz}
           userName={state.userName}
